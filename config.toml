@@ -1,0 +1,6 @@
+[[fs]]
+pathname = "/*"
+uid = 0
+gid = 0
+access = "r"
+action = ["allow"]

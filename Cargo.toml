@@ -1,0 +1,27 @@
+[package]
+name = "esx_mining"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies.mongodb]
+version = "2.4.0"
+features = ["tokio-sync"]
+[dependencies]
+fp-growth = "0.1"
+csv = "1.1.6"
+indicatif ="0.17.3"
+anyhow = "1.0.69"
+serde = {version = "1.0.152",features = ["derive"]}
+toml = "0.7.2"
+clustering = "0.1.0"
+rand = "0.8.5"
+gsdmm = {git = "https://github.com/rwalk/gsdmm-rust"}
+time = "0.3.15"
+bson = { version = "2", features = ["chrono-0_4"] } # Needed for using chrono datetime in doc
+tokio = "1.26.0"
+chrono = "0.4" # Used for setting DateTimes
+futures = "0.3"
+clap = {version = "4.3.3",features = ["derive"]}
+
+
