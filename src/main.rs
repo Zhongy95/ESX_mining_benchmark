@@ -30,13 +30,13 @@ use toml::*;
 use clustering::*;
 use rand::random;
 use gsdmm::*;
-use clap::{Parser, ValueEnum};
+use clap::{Parser, ValueEnum, Arg};
 
 type mutex_u64 = Arc<Mutex<u64>>;
 
 #[derive(clap::ValueEnum,Parser, Debug, PartialEq,Clone)]
 enum RankingPara {
-    ESXRate,
+    EsxRate,
     CScore,
     Qrul,
     LDistance,
@@ -51,7 +51,7 @@ enum JobType {
 
 
 
-/// Simple program to greet a person
+
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
@@ -76,9 +76,7 @@ struct Args {
 
     #[clap(short,long,value_enum,default_value="ranking-para-compare")]
     job_type: JobType,
-//    #[clap(long,value_enum,
-//    possible_values = &["ESXRate", "CScore","Qrul","lDistance","QrulFreq"  ])]
-//     balance_para: BalancePara,
+
 }
 
 
@@ -86,7 +84,14 @@ struct Args {
 #[tokio::main]
 async fn main()->Result<()> {
     println!("Start Mining Benchmark!");
+
+
+
+
+
+
     let args = Args::parse();
+    println!("{:?}", args);
 
     println!("DataPath: {}", args.data_path);
     println!("Output Path:{} ", args.output_path);
@@ -94,21 +99,6 @@ async fn main()->Result<()> {
     println!("jobType: {:?}",args.job_type);
     println!("balance rate: {}",args.balance_para);
     
-    // let vec1 = vec!["res:/genio/*".to_string()];
-    // let mut vec2 = vec!["UID:0", "GID:0", "op:r", "logtype:FILE"];
-    // let mut rule_test = vec![ "GID:990198116","logtype:FILE", "op:r"];
-
-    // calculating_overate_rate_mongo(&rule_test).await.unwrap();
-
-    // let mut hashed = DefaultHasher::new();
-    // let str_to_hash = "6ex".as_bytes().hash(&mut hashed);
-    // println!("{:?}",str_to_hash);
-    // hashed.write(str_to_hash.as_bytes());
-
-    // mining_rule_with_baseline("uop28.csv");
-    // mining_rule_with_fp_growth("uop28.csv");
-    // clustering_test()
-    // load_csv_to_mongodb("./data/azure_data.csv",1000).await?;
 
     let mut file = OpenOptions::new()
         .write(true)
@@ -117,16 +107,9 @@ async fn main()->Result<()> {
         .open("output_scoring_supportRate01.csv").unwrap();
     // let mut wtr = Writer::from_path("output_scoring.csv")?;
     let mut wtr = Writer::from_writer(file);
-    // wtr.write_record(&["a", "b", "c"])?;
-    // wtr.write_record(&["x", "y", "z"])?;
-    // wtr.flush()?;
-    // let start_time = SystemTime::now();
-    // let mut trans_1:Vec<Vec<String>> = Vec::new();
-    // let mut para_1:Vec<Vec<String>> = Vec::new();
-    // let mut set1:HashSet<String> = HashSet::new();
-    // (trans_1,para_1,set1) = load_csv("./data/azure_data.csv", 10000).unwrap();
-    // let end_time1 = SystemTime::now().duration_since(start_time).unwrap().as_secs_f64();
-    // let set_para: HashSet<Vec<String>> = HashSet::from_iter(para_1);
+
+    // if args.job_type == RankingPara
+
 
     // let start_time = SystemTime::now();
     // let mut trans_2:Vec<Vec<String>> = Vec::new();
@@ -225,45 +208,81 @@ async fn main()->Result<()> {
     // println!("union num:{},scoring num:{}",union_num,scoring_num);
     // let mut policy_cover_count_distinct = distinct_len+scoring_num-union_num;
     // println!("dis len:{} , policy_cover_count_d:{}",distinct_len,policy_cover_count_distinct);
+    use crate::JobType::*;
 
-
-
-    // let omega = 1.0;
-    // let scoring_rate = (20.0 as f64) /100.0;
-    // let support_rates = [0.05,0.1,0.15,0.2,0.3];
-    // for support_rate in support_rates{
-    //     for obp_it in 1..10{
-    //         let obp_rate:f64 = obp_it as f64/10.0;
-    //         let rule_set = mining_rule_with_fp_growth("./data/azure_data.csv",omega.clone(),loaded_num.clone(),scoring_rate.clone(),obp_rate.clone(),support_rate.clone()).await?;
-    //         let (precsion,TPR,FPR ,TPRnd,FPRnd )= evaluation_policy(&rule_set).await?;
-    //         wtr.write_record(&[
-    //             loaded_num.clone().to_string(),
-    //             scoring_rate.clone().to_string(),
-    //             omega.clone().to_string(),
-    //             obp_rate.clone().to_string(),
-    //             support_rate.clone().to_string(),
-    //             precsion.clone().to_string(),
-    //             TPR.clone().to_string(),
-    //             FPR.clone().to_string(),
-    //             TPRnd.clone().to_string(),
-    //             FPRnd.clone().to_string()])?;
-    //         wtr.flush()?;
-    //     }
-    //     let rule_set = mining_rule_with_fp_growth("./data/azure_data.csv",omega.clone(),loaded_num.clone(),scoring_rate.clone(),1.0,support_rate.clone()).await?;
-    //     let (precsion,TPR,FPR ,TPRnd,FPRnd )= evaluation_policy(&rule_set).await?;
-    //     wtr.write_record(&[
-    //         loaded_num.clone().to_string(),
-    //         scoring_rate.clone().to_string(),
-    //         omega.clone().to_string(),
-    //         "1.0".clone().to_string(),
-    //         support_rate.clone().to_string(),
-    //         precsion.clone().to_string(),
-    //         TPR.clone().to_string(),
-    //         FPR.clone().to_string(),
-    //         TPRnd.clone().to_string(),
-    //         FPRnd.clone().to_string()])?;
-    //     wtr.flush()?;
-    // }
+    if args.job_type == SupportRateCompare{
+        let omega = args.balance_para;
+        let scoring_rate = (20.0 as f64) /100.0;
+        let support_rates = [0.05,0.1,0.15,0.2,0.3];
+        for support_rate in support_rates{
+            for obp_it in 1..10{
+                let obp_rate:f64 = obp_it as f64/10.0;
+                let rule_set = mining_rule_with_fp_growth(args.data_path.as_str(),omega.clone(),loaded_num.clone(),scoring_rate.clone(),obp_rate.clone(),support_rate.clone()).await?;
+                let (precsion,TPR,FPR ,TPRnd,FPRnd )= evaluation_policy(&rule_set).await?;
+                wtr.write_record(&[
+                    loaded_num.clone().to_string(),
+                    scoring_rate.clone().to_string(),
+                    omega.clone().to_string(),
+                    obp_rate.clone().to_string(),
+                    support_rate.clone().to_string(),
+                    precsion.clone().to_string(),
+                    TPR.clone().to_string(),
+                    FPR.clone().to_string(),
+                    TPRnd.clone().to_string(),
+                    FPRnd.clone().to_string()])?;
+                wtr.flush()?;
+            }
+            let rule_set = mining_rule_with_fp_growth(args.data_path.as_str(),omega.clone(),loaded_num.clone(),scoring_rate.clone(),1.0,support_rate.clone()).await?;
+            let (precsion,TPR,FPR ,TPRnd,FPRnd )= evaluation_policy(&rule_set).await?;
+            wtr.write_record(&[
+                loaded_num.clone().to_string(),
+                scoring_rate.clone().to_string(),
+                omega.clone().to_string(),
+                "1.0".clone().to_string(),
+                support_rate.clone().to_string(),
+                precsion.clone().to_string(),
+                TPR.clone().to_string(),
+                FPR.clone().to_string(),
+                TPRnd.clone().to_string(),
+                FPRnd.clone().to_string()])?;
+            wtr.flush()?;
+        }
+    }else{
+        let omega = args.balance_para;
+        let scoring_rate = 21.0 /100.0;
+        for obp_it in 1..10{
+            let obp_rate:f64 = obp_it as f64/10.0;
+            let rule_set = mining_rule_with_fp_growth(args.data_path.as_str(),omega.clone(),loaded_num.clone(),scoring_rate.clone(),obp_rate.clone(),0.1).await?;
+            let (precsion,TPR,FPR ,TPRnd,FPRnd )= evaluation_policy(&rule_set).await?;
+            wtr.write_record(&[
+                loaded_num.clone().to_string(),
+                scoring_rate.clone().to_string(),
+                omega.clone().to_string(),
+                obp_rate.clone().to_string(),
+                "0.1".to_string(),
+                precsion.clone().to_string(),
+                TPR.clone().to_string(),
+                FPR.clone().to_string(),
+                TPRnd.clone().to_string(),
+                FPRnd.clone().to_string()])?;
+            wtr.flush()?;
+        }
+        let rule_set = mining_rule_with_fp_growth(args.data_path.as_str(),omega.clone(),loaded_num.clone(),scoring_rate.clone(),1.0,0.1).await?;
+        let (precsion,TPR,FPR ,TPRnd,FPRnd )= evaluation_policy(&rule_set).await?;
+        wtr.write_record(&[
+            loaded_num.clone().to_string(),
+            scoring_rate.clone().to_string(),
+            omega.clone().to_string(),
+            "1.0".clone().to_string(),
+            "0.1".to_string(),
+            precsion.clone().to_string(),
+            TPR.clone().to_string(),
+            FPR.clone().to_string(),
+            TPRnd.clone().to_string(),
+            FPRnd.clone().to_string()])?;
+        wtr.flush()?;
+    }
+    
 
     
     
